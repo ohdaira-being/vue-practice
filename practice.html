@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vue.js App</title>
+
+  <link rel="stylesheet" href="practice.css">
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+</head>
+<body>
+  <div id="app">
+    <h1>ToDoリスト！</h1>
+
+    <h2>新しい作業の追加</h2>
+    <form class="add-form" v-on:submit.prevent="doAdd">
+      <!-- タスク入力フォーム -->
+      新しいタスク<input type="text" ref="comment">
+      <!-- 期限入力フォーム -->
+      期限<input type="date" ref="day">
+      <!-- 追加ボタン -->
+      <button type="submit">追加</button>
+    </form>
+
+    <h2>タスクリスト</h2>
+    <p>絞り込み：
+    <!-- 絞り込みラジオボタン -->
+    <label v-for="label in options">
+      <input type="radio" 
+        v-model="current" 
+        v-bind:value="label.value">
+      {{ label.label }}
+    </label>
+    ({{ computedTodos.length }}件を表示)
+   </p>
+   <p>※削除ボタンはコントロールキーを押しながらクリックして下さい。</p>
+    <!-- ToDo テーブル -->
+    <table>
+      <!-- テーブルヘッダー -->
+      <thead>
+        <tr>
+          <th class="id"></th>
+          <th class="comment">タスク名</th>
+          <th class="day">期限</th>
+          <th class="state">状態</th>
+          <th class="edit"></th>
+          <th class="button"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- [1] ここに <tr> で ToDo の要素を1行づつ繰り返し表示したい -->
+          <tr v-for="item in computedTodos" v-bind:key="item.id" v-bind:class="{done:item.state}">
+            <!-- 要素の情報 -->
+            <td>{{ item.id }}</td>
+            <td>
+              <!-- コメント -->
+              {{ item.comment }}
+              <div v-show="item.edit">編集：<input type="text" v-model= " item.comment ">
+            </td>
+            <td class="day">
+              <!-- 期限 -->
+              {{ item.day }}
+              <div v-show="item.edit"><input type="date" v-model="item.day">
+            </td>
+            <td class="state">
+              <!-- 状態変更 -->
+              <button v-on:click="doChangeState(item)">{{ labels[item.state] }}</button>
+            </td>
+            <td class="edit">
+              <!-- 編集ボタン -->
+              <button v-on:click="doChangeComment(item)" v-show="!item.edit">編集</button>
+              <button v-on:click="doChangeComment(item)" v-show="item.edit">完了</button>
+            </td>
+            <td class="button">
+              <!-- 削除ボタン -->
+              <button v-on:click.ctrl="doRemove(item)">削除</button>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+    
+  </div>
+
+
+  <script src="practice.js"></script>
+
+</body>
+</html>
